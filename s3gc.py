@@ -11,9 +11,9 @@ PREFIX = os.environ.get('PREFIX', '')
 DRY_RUN = os.environ.get('DRY_RUN', 'true').lower() in ('true', '1')
 
 NOW = datetime.datetime.now(tz=pytz.UTC)
-DAYS = os.environ.get('DAYS', 0)
-HOURS = os.environ.get('HOURS', 0)
-MINUTES = os.environ.get('MINUTES', 0)
+DAYS = int(os.environ.get('DAYS', 0))
+HOURS = int(os.environ.get('HOURS', 0))
+MINUTES = int(os.environ.get('MINUTES', 0))
 PAST = NOW - datetime.timedelta(days=DAYS, hours=HOURS, minutes=MINUTES)
 
 
