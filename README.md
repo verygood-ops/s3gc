@@ -3,7 +3,7 @@
 
 S3 cleaner for those who need a schedule more precise than AWS Lifecycle.
 
-## Usage
+## Docker
 ```bash
 docker run -i \
   -e AWS_ACCESS_KEY_ID="XXX"
