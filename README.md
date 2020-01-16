@@ -13,11 +13,28 @@ docker run -i \
   -e BUCKET='my-bucket' \
   -e WILDCARD='logs/debug/app/' \
   -e HOURS=3 \
-  quay.io/verygoodsecurity/s3gc:release-X.X.X 
+  quay.io/verygoodsecurity/s3gc:release-0.2.0 
 ```
 
 ## Kubernetes CronJob
-TODO
+```
+apiVersion: batch/v1beta1
+kind: CronJob
+metadata:
+  name: s3gc
+  namespace: s3gc
+spec:
+  schedule: 0 * * * *
+  concurrencyPolicy: Forbid
+  jobTemplate:
+    spec:
+      template:
+        spec:
+          restartPolicy: Never
+          containers:
+          - image: quay.io/verygoodsecurity/s3gc:release-0.2.0
+            name: s3gc
+```
 
 ## Security
 It is highly recommended to run this under a strict IAM role which has access 
