@@ -38,10 +38,55 @@ spec:
 
 ## Security
 It is highly recommended to run this under a strict IAM role which has access 
-only to certain operations in a single bucket. 
-
-IAM Policy example TODO
-
+only to certain operations in a single bucket.
+```bash
+{
+    "Version": "2012-10-17",
+    "Statement": [
+        {
+            "Action": [
+                "s3:GetBucketLocation"
+            ],
+            "Resource": "arn:aws:s3:::my-bucket",
+            "Effect": "Allow"
+        },
+        {
+            "Action": [
+                "s3:ListBucket"
+            ],
+            "Condition": {
+                "StringLike": {
+                    "s3:prefix": "my-prefix"
+                }
+            },
+            "Resource": "arn:aws:s3:::my-bucket",
+            "Effect": "Allow"
+        },
+        {
+            "Action": [
+                "s3:ListBucket"
+            ],
+            "Condition": {
+                "StringLike": {
+                    "s3:prefix": "my-prefix/*"
+                }
+            },
+            "Resource": "arn:aws:s3:::my-bucket",
+            "Effect": "Allow"
+        },
+        {
+            "Action": [
+                "s3:DeleteObject*"
+            ],
+            "Resource": [
+                "arn:aws:s3:::my-prefix/*"
+            ],
+            "Effect": "Allow"
+        }
+    ]
+}
+```
+To assume IAM role:
 - Locally, [aws-profile](https://github.com/jrstarke/aws-profile) can be used to 
 generate temp credentials based on a role.
 - In Kubernetes, use [EKS pod roles](https://aws.amazon.com/blogs/opensource/introducing-fine-grained-iam-roles-service-accounts/) 
