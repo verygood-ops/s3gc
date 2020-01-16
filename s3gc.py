@@ -2,12 +2,14 @@ import datetime
 import boto3
 import pytz
 import os
+import fnmatch
 
 s3 = boto3.client('s3')
 S3_BATCH = 1000
 
 BUCKET = os.environ['BUCKET']
-PREFIX = os.environ.get('PREFIX', '')
+WILDCARD = os.environ.get('WILDCARD', '')
+PREFIX = os.path.dirname(WILDCARD.split("*")[0].split('?')[0].split('[')[0])
 DRY_RUN = os.environ.get('DRY_RUN', 'true').lower() in ('true', '1')
 
 NOW = datetime.datetime.now(tz=pytz.UTC)
@@ -18,12 +20,12 @@ PAST = NOW - datetime.timedelta(days=DAYS, hours=HOURS, minutes=MINUTES)
 
 
 def main():
-    do_gc(BUCKET, PREFIX, DRY_RUN)
+    do_gc(BUCKET, PREFIX, WILDCARD, DRY_RUN)
 
 
-def do_gc(bucket, prefix, dry_run):
+def do_gc(bucket, prefix, wildcard, dry_run):
     to_delete = []
-    for obj in get_objects_to_delete(bucket, prefix):
+    for obj in get_objects_to_delete(bucket, prefix, wildcard):
         to_delete.append({'Key': obj['Key']})
 
         if len(to_delete) == S3_BATCH:
@@ -34,12 +36,12 @@ def do_gc(bucket, prefix, dry_run):
     print('Done.')
 
 
-def get_objects_to_delete(bucket, prefix):
+def get_objects_to_delete(bucket, prefix, wildcard):
     kwargs = dict(Bucket=bucket, Prefix=prefix)
     while True:
         resp = s3.list_objects_v2(**kwargs)
         for obj in resp['Contents']:
-            if obj['LastModified'] < PAST:
+            if fnmatch.fnmatch(obj['Key'], wildcard) and (obj['LastModified'] < PAST):
                 yield obj
 
         try:
