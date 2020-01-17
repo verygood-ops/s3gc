@@ -13,7 +13,7 @@ docker run -i \
   -e BUCKET='my-bucket' \
   -e WILDCARD='logs/debug/app/' \
   -e HOURS=3 \
-  quay.io/verygoodsecurity/s3gc:release-0.2.0 
+  quay.io/verygoodsecurity/s3gc:release-0.4.0 
 ```
 
 ## Kubernetes CronJob
@@ -32,7 +32,7 @@ spec:
         spec:
           restartPolicy: Never
           containers:
-          - image: quay.io/verygoodsecurity/s3gc:release-0.2.0
+          - image: quay.io/verygoodsecurity/s3gc:release-0.4.0
             name: s3gc
 ```
 
@@ -78,9 +78,7 @@ only to certain operations in a single bucket.
             "Action": [
                 "s3:DeleteObject*"
             ],
-            "Resource": [
-                "arn:aws:s3:::my-prefix/*"
-            ],
+            "Resource": "arn:aws:s3:::my-bucket/my-prefix/*",
             "Effect": "Allow"
         }
     ]
