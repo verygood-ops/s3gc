@@ -60,7 +60,8 @@ def delete_objects(bucket, objects, dry_run=True):
         print(f"Deleting {objects}")
         r = s3.delete_objects(Bucket=bucket, Delete={'Objects': objects})
         print(f"Response {r}")
-        if r['ResponseMetadata']['HTTPStatusCode'] != 200:
+        if ((r['ResponseMetadata']['HTTPStatusCode'] != 200)
+                or (len(r.get('Errors', [])) > 0)):
             raise Exception("Smth went wrong.")
 
 
