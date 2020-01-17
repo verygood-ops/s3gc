@@ -39,7 +39,7 @@ spec:
 ## Security
 It is highly recommended to run this under a strict IAM role which has access 
 only to certain operations in a single bucket.
-```bash
+```json
 {
     "Version": "2012-10-17",
     "Statement": [

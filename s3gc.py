@@ -9,7 +9,7 @@ S3_BATCH = 1000
 
 BUCKET = os.environ['BUCKET']
 WILDCARD = os.environ.get('WILDCARD', '')
-PREFIX = os.path.dirname(WILDCARD.split("*")[0].split('?')[0].split('[')[0])
+PREFIX = os.path.dirname(WILDCARD.split("*")[0].split('?')[0].split('[')[0]) + "/"
 DRY_RUN = os.environ.get('DRY_RUN', 'true').lower() in ('true', '1')
 
 NOW = datetime.datetime.now(tz=pytz.UTC)
@@ -58,7 +58,10 @@ def delete_objects(bucket, objects, dry_run=True):
         print(f"Dry-run deleting {objects}")
     else:
         print(f"Deleting {objects}")
-        s3.delete_objects(Bucket=bucket, Delete={'Objects': objects})
+        r = s3.delete_objects(Bucket=bucket, Delete={'Objects': objects})
+        print(f"Response {r}")
+        if r['ResponseMetadata']['HTTPStatusCode'] != 200:
+            raise Exception("Smth went wrong.")
 
 
 if __name__ == "__main__":
